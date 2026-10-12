@@ -136,9 +136,9 @@ document.addEventListener("DOMContentLoaded", function () {
          * เปลี่ยนหน้าแยกตามสิทธิ์
          */
         if (account.role === "admin") {
-            window.location.href = "pages/dashboard.html";
+            window.location.href = "dashboard.html";
         } else {
-            window.location.href = "pages/report.html";
+            window.location.href = "report.html";
         }
     });
 });
