@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Issue Report System</title>
+
+    <link
+        rel="icon"
+        type="image/png"
+        href="../images/logoweb.png"
+    >
+
+    <link rel="stylesheet" href="../css/report.css">
+
+</head>
+
+
+<body>
+
+    <!-- ส่วนหัวเว็บไซต์ -->
+    <header class="site-header">
+
+    <div class="header-container">
+
+        <a
+            href="report.html"
+            class="brand"
+        >
+            <img
+    src="../images/logo.png"
+    alt="KFT Company Logo"
+    width="150"
+>
+
+            <div class="brand-text">
+                <h1>Issue Report System</h1>
+
+                <p>
+                    ระบบแจ้งปัญหาภายในองค์กร
+                </p>
+            </div>
+        </a>
+
+        <button
+            type="button"
+            id="logoutButton"
+            class="logout-button"
+        >
+            <span aria-hidden="true">↪</span>
+            ออกจากระบบ
+        </button>
+
+    </div>
+
+</header>
+
+
+    <!-- เนื้อหาหลัก -->
+    <main class="main-container">
+
+        <!-- ข้อมูลผู้ใช้งาน -->
+        <section class="user-info-card">
+
+            <div>
+                <span class="info-label">
+                    ผู้ใช้งาน
+                </span>
+
+                <strong id="currentUsername">
+                    -
+                </strong>
+            </div>
+
+
+            <div>
+                <span class="info-label">
+                    แผนก
+                </span>
+
+                <strong id="currentDepartment">
+                    -
+                </strong>
+            </div>
+
+        </section>
+
+
+        <!-- กล่องแบบฟอร์ม -->
+        <section class="report-card">
+
+            <div class="report-card-header">
+
+                <h2>
+                    แจ้งปัญหา
+                </h2>
+
+                <p>
+                    กรุณากรอกรายละเอียดของปัญหาที่พบ
+                </p>
+
+            </div>
+
+
+            <!-- ข้อความแจ้งเตือน -->
+            <div
+                id="successMessage"
+                class="message success-message"
+                role="alert"
+                hidden
+            >
+                ส่งแจ้งปัญหาสำเร็จ
+            </div>
+
+
+            <div
+                id="errorMessage"
+                class="message error-message"
+                role="alert"
+                hidden
+            >
+                ไม่สามารถส่งแจ้งปัญหาได้
+            </div>
+
+
+            <!-- แบบฟอร์มแจ้งปัญหา -->
+            <form
+                id="reportForm"
+                class="report-form"
+                novalidate
+            >
+
+                
+                <!-- ประเภทปัญหา -->
+                <div class="form-group">
+
+                    <label
+                        for="category"
+                        class="form-label"
+                    >
+                        ประเภทปัญหา
+                        <span class="required">*</span>
+                    </label>
+
+                    <select
+                        id="category"
+                        name="category"
+                        class="form-control"
+                        required
+                    >
+                        <option
+                            value=""
+                            selected
+                            disabled
+                        >
+                            -- เลือกประเภทปัญหา --
+                        </option>
+
+                        <option value="คอมพิวเตอร์">
+                            คอมพิวเตอร์
+                        </option>
+
+                        <option value="Serverเข้าไม่ได้">
+                            Serverเข้าไม่ได้
+                        </option>
+
+                        <option value="เครื่องพิมพ์">
+                            เครื่องพิมพ์
+                        </option>
+
+                        <option value="โปรแกรม">
+                            โปรแกรม
+                        </option>
+
+                        <option value="ระบบอินเทอร์เน็ต">
+                            ระบบอินเทอร์เน็ต
+                        </option>
+
+                        <option value="อุปกรณ์สำนักงาน">
+                            อุปกรณ์สำนักงาน
+                        </option>
+                        
+                        <option value="tablet/IPAD">
+                            tablet/IPAD
+                        </option>
+
+                        <option value="อื่น ๆ">
+                            อื่น ๆ
+                        </option>
+                    </select>
+
+                </div>
+
+
+                <!-- รายละเอียดปัญหา -->
+                <div class="form-group">
+
+                    <label
+                        for="description"
+                        class="form-label"
+                    >
+                        รายละเอียดปัญหา
+                        <span class="required">*</span>
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        class="form-control textarea-control"
+                        placeholder="อธิบายอาการหรือปัญหาที่พบ..."
+                        rows="6"
+                        maxlength="2000"
+                        required
+                    ></textarea>
+
+                </div>
+
+                
+                <!-- หมายเลขอุปกรณ์ -->
+                <div class="form-group">
+
+                    <label
+                        for="assetNumber"
+                        class="form-label"
+                    >
+                        หมายเลขทรัพย์สิน / รหัสเครื่อง
+                        <span class="optional">
+                            (ถ้ามี)
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="assetNumber"
+                        name="assetNumber"
+                        class="form-control"
+                        placeholder="เช่น KFT-PC-001"
+                        maxlength="100"
+                    >
+
+                </div>
+
+
+                <!-- รูปภาพ -->
+                <div class="form-group">
+
+                    <label
+                        for="image"
+                        class="form-label"
+                    >
+                        รูปภาพประกอบ
+                        <span class="optional">
+                            (ถ้ามี)
+                        </span>
+                    </label>
+
+                    <input
+                        type="file"
+                        id="image"
+                        name="image"
+                        class="form-control file-control"
+                        accept="image/*"
+                    >
+
+                    <small class="form-help">
+                        รองรับไฟล์รูปภาพ เช่น JPG, PNG และ WEBP
+                    </small>
+
+                </div>
+
+
+                <!-- ปุ่มส่งข้อมูล -->
+                <div class="form-actions">
+
+                    <button
+                        type="submit"
+                        id="submitButton"
+                        class="submit-button"
+                    >
+                        <span aria-hidden="true">➤</span>
+                        ส่งแจ้งปัญหา
+                    </button>
+
+                    <button
+                        type="reset"
+                        id="resetButton"
+                        class="reset-button"
+                    >
+                        ล้างข้อมูล
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+    </main>
+
+
+    <!-- ส่วนท้าย -->
+    <footer class="site-footer">
+
+        <p>
+            IT Support • KFT Issue Report System
+        </p>
+
+    </footer>
+
+
+    <!-- JavaScript ตรวจสอบสิทธิ์ -->
+    <script src="../js/auth.js"></script>
+
+
+    <!-- ตรวจสอบการ Login -->
+    <script>
+        if (typeof checkLogin === "function") {
+            checkLogin();
+        } else {
+            console.error(
+                "ไม่พบฟังก์ชัน checkLogin() จาก auth.js"
+            );
+        }
+    </script>
+
+
+    <!-- แสดงข้อมูลผู้ใช้งานและจัดการ Logout -->
+    <script>
+        document.addEventListener(
+            "DOMContentLoaded",
+            function () {
+
+                const user =
+                    typeof getCurrentUser === "function"
+                        ? getCurrentUser()
+                        : null;
+
+                const currentUsername =
+                    document.getElementById(
+                        "currentUsername"
+                    );
+
+                const currentDepartment =
+                    document.getElementById(
+                        "currentDepartment"
+                    );
+
+                const logoutButton =
+                    document.getElementById(
+                        "logoutButton"
+                    );
+
+
+                if (user) {
+                    if (currentUsername) {
+                        currentUsername.textContent =
+                            user.username || "-";
+                    }
+
+                    if (currentDepartment) {
+                        currentDepartment.textContent =
+                            user.department || "-";
+                    }
+                }
+
+
+                if (logoutButton) {
+                    logoutButton.addEventListener(
+                        "click",
+                        function () {
+
+                            if (
+                                typeof logout === "function"
+                            ) {
+                                logout();
+                            } else {
+                                sessionStorage.clear();
+
+                                window.location.href =
+                                    "../index.html";
+                            }
+
+                        }
+                    );
+                }
+
+            }
+        );
+    </script>
+
+
+    <!-- JavaScript ระบบแจ้งปัญหา -->
+    <script src="../js/report.js"></script>
+
+</body>
+
+</html>

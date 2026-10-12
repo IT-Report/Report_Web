@@ -1,0 +1,26 @@
+/* ปุ่มออกจากระบบ */
+#logoutButton {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+
+    width: auto;
+    padding: 7px 12px;
+
+    border: 1px solid #d5d9df;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #555;
+
+    font-size: 12px;
+    font-weight: normal;
+
+    cursor: pointer;
+    box-shadow: none;
+}
+
+#logoutButton:hover {
+    background: #f4f6f9;
+    color: #2563eb;
+}

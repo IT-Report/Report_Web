@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard | Issue Report System</title>
+    
+    <link
+    rel="icon"
+    type="image/png"
+    href="../images/logoweb.png"
+>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+
+    <!-- ตรวจสอบสิทธิ์ Admin -->
+    <script src="../js/auth.js"></script>
+
+    <script>
+        checkAdmin();
+    </script>
+
+
+    <!-- Header -->
+    <header class="admin-header">
+
+        <div class="header-left">
+
+            <img
+    src="../images/logo.png"
+    alt="KFT Company Logo"
+    width="150"
+>
+
+            <div class="header-title">
+                <h1>Admin Dashboard</h1>
+                <p>Issue Report Management System</p>
+            </div>
+
+        </div>
+
+
+        <div class="header-right">
+
+            <div class="admin-info">
+                <span class="admin-label">ผู้ดูแลระบบ</span>
+                <strong id="adminUsername">ADMIN</strong>
+            </div>
+
+            <button
+                type="button"
+                id="logoutButton"
+                class="logout-button"
+            >
+                ออกจากระบบ
+            </button>
+
+        </div>
+
+    </header>
+
+
+    <!-- Main Content -->
+    <main class="dashboard-container">
+
+        <!-- Page Title -->
+        <section class="dashboard-heading">
+
+            <div>
+                <h2>รายการแจ้งปัญหา</h2>
+
+                <p>
+                    ตรวจสอบและจัดการรายการปัญหาจากพนักงานภายในองค์กร
+                </p>
+            </div>
+
+            <button
+                type="button"
+                id="refreshButton"
+                class="refresh-button"
+            >
+                รีเฟรชข้อมูล
+            </button>
+
+        </section>
+
+
+        <!-- Summary Cards -->
+        <section class="summary-grid">
+
+            <div class="summary-card">
+                <span class="summary-title">
+                    รายการทั้งหมด
+                </span>
+
+                <strong
+                    id="totalIssues"
+                    class="summary-number"
+                >
+                    0
+                </strong>
+            </div>
+
+
+            <div class="summary-card pending-card">
+                <span class="summary-title">
+                    รอดำเนินการ
+                </span>
+
+                <strong
+                    id="pendingIssues"
+                    class="summary-number"
+                >
+                    0
+                </strong>
+            </div>
+
+
+            <div class="summary-card progress-card">
+                <span class="summary-title">
+                    กำลังดำเนินการ
+                </span>
+
+                <strong
+                    id="progressIssues"
+                    class="summary-number"
+                >
+                    0
+                </strong>
+            </div>
+
+
+            <div class="summary-card complete-card">
+                <span class="summary-title">
+                    ดำเนินการแล้ว
+                </span>
+
+                <strong
+                    id="completedIssues"
+                    class="summary-number"
+                >
+                    0
+                </strong>
+            </div>
+
+        </section>
+
+
+        <!-- Filter Section -->
+        <section class="filter-section">
+
+            <div class="filter-group">
+
+                <label for="statusFilter">
+                    สถานะ
+                </label>
+
+                <select id="statusFilter">
+
+                    <option value="all">
+                        ทั้งหมด
+                    </option>
+
+                    <option value="รอดำเนินการ">
+                        รอดำเนินการ
+                    </option>
+
+                    <option value="กำลังดำเนินการ">
+                        กำลังดำเนินการ
+                    </option>
+
+                    <option value="ดำเนินการแล้ว">
+                        ดำเนินการแล้ว
+                    </option>
+
+                    <option value="ยกเลิก">
+                        ยกเลิก
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-group">
+
+                <label for="departmentFilter">
+                    แผนก
+                </label>
+
+                <select id="departmentFilter">
+
+                    <option value="all">
+                        ทุกแผนก
+                    </option>
+
+                    <option value="GAD">
+                        GAD
+                    </option>
+
+                    <option value="QCD">
+                        QCD
+                    </option>
+
+                    <option value="ACD">
+                        ACD
+                    </option>
+
+                    <option value="MKD">
+                        MKD
+                    </option>
+
+                    <option value="PSD">
+                        PSD
+                    </option>
+
+                    <option value="PED">
+                        PED
+                    </option>
+
+                    <option value="PDD">
+                        PDD
+                    </option>
+
+                    <option value="PCS">
+                        PCS
+                    </option>
+
+                    <option value="PRD">
+                        PRD
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-group search-group">
+
+                <label for="searchInput">
+                    ค้นหา
+                </label>
+
+                <input
+                    type="search"
+                    id="searchInput"
+                    placeholder="ค้นหา Ticket, ผู้แจ้ง หรือหัวข้อ..."
+                >
+
+            </div>
+
+        </section>
+
+
+        <!-- Loading Message -->
+        <div
+            id="loadingMessage"
+            class="loading-message"
+        >
+            กำลังโหลดข้อมูล...
+        </div>
+
+
+        <!-- Error Message -->
+        <div
+            id="errorMessage"
+            class="error-message"
+            hidden
+        >
+            ไม่สามารถโหลดข้อมูลได้
+        </div>
+
+
+        <!-- Issue Table -->
+        <section class="table-section">
+
+            <div class="table-wrapper">
+
+                <table class="issue-table">
+
+                    <thead>
+
+                        <tr>
+                            <th>Ticket</th>
+                            <th>วันที่แจ้ง</th>
+                            <th>ผู้แจ้ง</th>
+                            <th>แผนก</th>
+                            <th>หัวข้อ</th>
+                            <th>รายละเอียด</th>
+                            <th>สถานะ</th>
+                            <th>รูปภาพ</th>
+                            <th>จัดการ</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="issueTableBody">
+
+                        <!-- dashboard.js จะสร้างข้อมูลตรงนี้ -->
+
+                        <tr>
+                            <td
+                                colspan="9"
+                                class="empty-message"
+                            >
+                                ยังไม่มีข้อมูลรายการแจ้งปัญหา
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- Modal รายละเอียด Issue -->
+    <div
+        id="issueModal"
+        class="modal"
+        hidden
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h3>
+                    รายละเอียด Issue
+                </h3>
+
+                <button
+                    type="button"
+                    id="closeModalButton"
+                    class="close-modal-button"
+                    aria-label="ปิดหน้าต่าง"
+                >
+                    &times;
+                </button>
+
+            </div>
+
+
+            <div
+                id="issueDetail"
+                class="issue-detail"
+            >
+                <!-- dashboard.js จะแสดงรายละเอียดตรงนี้ -->
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    id="closeDetailButton"
+                    class="secondary-button"
+                >
+                    ปิด
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Authentication -->
+<script src="../js/auth.js"></script>
+
+<script>
+    /*
+     * ตรวจสอบสิทธิ์ Admin ก่อนโหลด Dashboard
+     */
+    if (!checkAdmin()) {
+        throw new Error("ไม่มีสิทธิ์เข้าใช้งาน Admin Dashboard");
+    }
+</script>
+
+<!-- Dashboard -->
+<script src="../js/dashboard.js"></script>
+
+</body>
+</html>

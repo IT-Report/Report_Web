@@ -1,0 +1,206 @@
+/* =========================
+   Reset
+========================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+/* =========================
+   Body
+========================= */
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f6f9;
+    color: #333;
+
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* =========================
+   Main
+========================= */
+
+main {
+    width: 100%;
+    max-width: 420px;
+    padding: 20px;
+}
+
+
+/* =========================
+   Header
+========================= */
+
+header {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+header h1 {
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #666;
+    font-size: 14px;
+}
+
+
+/* =========================
+   Login Section
+========================= */
+
+section {
+    background: #ffffff;
+
+    padding: 30px;
+
+    border-radius: 12px;
+
+    box-shadow:
+        0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+section h2 {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+section > p {
+    text-align: center;
+    color: #777;
+    font-size: 14px;
+    margin-bottom: 25px;
+}
+
+
+/* =========================
+   Form
+========================= */
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+
+/* =========================
+   Form Group
+========================= */
+
+form div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+label {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+
+/* =========================
+   Input
+========================= */
+
+input {
+    width: 100%;
+
+    padding: 12px;
+
+    border: 1px solid #d5d9df;
+    border-radius: 7px;
+
+    font-size: 15px;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+input:focus {
+    border-color: #2563eb;
+}
+
+
+/* =========================
+   Login Button
+========================= */
+
+button {
+    width: 100%;
+
+    padding: 12px;
+
+    margin-top: 5px;
+
+    border: none;
+    border-radius: 7px;
+
+    background: #2563eb;
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+/* ปุ่มออกจากระบบ */
+#logoutButton {
+    position: fixed;
+    top: 20px;
+    right: 25px;
+
+    width: auto;
+    padding: 7px 12px;
+
+    border: 1px solid #d5d9df;
+    border-radius: 6px;
+
+    background: #ffffff;
+    color: #555;
+
+    font-size: 12px;
+    font-weight: normal;
+
+    cursor: pointer;
+    box-shadow: none;
+}
+
+#logoutButton:hover {
+    background: #f4f6f9;
+    color: #2563eb;
+}
+/* =========================
+   Footer
+========================= */
+
+footer {
+    text-align: center;
+
+    margin-top: 20px;
+
+    color: #888;
+
+    font-size: 12px;
+}
