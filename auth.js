@@ -45,7 +45,7 @@ function checkLogin() {
     const user = getCurrentUser();
 
     if (!user) {
-        window.location.href = "../index.html";
+        window.location.href = "index.html";
         return false;
     }
 
@@ -61,7 +61,7 @@ function checkLogin() {
      * อนุญาตเฉพาะ Employee
      */
     if (user.role !== "employee") {
-        window.location.href = "../index.html";
+        window.location.href = "index.html";
         return false;
     }
 
@@ -77,7 +77,7 @@ function checkAdmin() {
     const user = getCurrentUser();
 
     if (!user) {
-        window.location.href = "../index.html";
+        window.location.href = "index.html";
         return false;
     }
 
@@ -124,5 +124,5 @@ function logout() {
      * กลับไปหน้า Login
      * เพราะ auth.js ถูกเรียกจากหน้าในโฟลเดอร์ pages
      */
-    window.location.href = "../index.html";
+    window.location.href = "index.html";
 }
