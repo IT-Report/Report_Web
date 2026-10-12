@@ -65,7 +65,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     sessionStorage.clear();
 
                     window.location.href =
-                        "../index.html";
+                        "index.html";
                 }
 
             }
