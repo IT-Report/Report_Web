@@ -354,7 +354,29 @@ function renderIssues() {
         addCell(row, description);
 
         const statusCell = document.createElement("td");
-        statusCell.appendChild(createStatusBadge(status));
+        const statusSelect = document.createElement("select");
+        statusSelect.className = "issue-status-select";
+        statusSelect.setAttribute("aria-label", "เปลี่ยนสถานะ Ticket " + ticket);
+
+        [
+            { value: "รอดำเนินการ", label: "รอดำเนินการ" },
+            { value: "เสร็จสิ้น", label: "เสร็จสิ้น" }
+        ].forEach(function (optionData) {
+            const option = document.createElement("option");
+            option.value = optionData.value;
+            option.textContent = optionData.label;
+            statusSelect.appendChild(option);
+        });
+
+        // รองรับข้อมูลเก่าที่ใช้คำว่า "ดำเนินการแล้ว"
+        statusSelect.value =
+            status === "ดำเนินการแล้ว" ? "เสร็จสิ้น" : status;
+
+        statusSelect.addEventListener("change", function () {
+            updateIssueStatus(issue, ticket, status, statusSelect);
+        });
+
+        statusCell.appendChild(statusSelect);
         row.appendChild(statusCell);
 
         const imageCell = document.createElement("td");
@@ -389,6 +411,85 @@ function renderIssues() {
 
         tableBody.appendChild(row);
     });
+}
+
+
+/*************************************************
+ * เปลี่ยนสถานะรายการแจ้งปัญหา
+ * ต้องมี action=updateStatus รองรับใน Apps Script
+ *************************************************/
+function updateIssueStatus(issue, ticket, previousStatus, selectElement) {
+    const nextStatus = selectElement.value;
+    if (nextStatus === previousStatus) return;
+
+    selectElement.disabled = true;
+
+    const iframeName = "statusUpdateFrame_" + Date.now();
+    const iframe = document.createElement("iframe");
+    iframe.name = iframeName;
+    iframe.style.display = "none";
+
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = API_URL;
+    form.target = iframeName;
+    form.style.display = "none";
+
+    const input = document.createElement("input");
+    input.type = "hidden";
+    input.name = "payload";
+    input.value = JSON.stringify({
+        action: "updateStatus",
+        ticket: ticket,
+        status: nextStatus
+    });
+    form.appendChild(input);
+
+    let handled = false;
+    function cleanup() {
+        setTimeout(function () {
+            if (form.parentNode) form.parentNode.removeChild(form);
+            if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+        }, 500);
+    }
+
+    iframe.addEventListener("load", async function () {
+        if (handled) return;
+        handled = true;
+        cleanup();
+
+        await new Promise(function (resolve) {
+            setTimeout(resolve, 1200);
+        });
+        await loadIssues();
+
+        const savedIssue = allIssues.find(function (item) {
+            return getIssueValue(item, "TICKET") === ticket;
+        });
+        const savedStatus = savedIssue ? getIssueValue(savedIssue, "STATUS") : "";
+
+        if (
+            savedStatus === nextStatus ||
+            (nextStatus === "เสร็จสิ้น" && savedStatus === "ดำเนินการแล้ว")
+        ) {
+            alert("บันทึกสถานะ Ticket " + ticket + " สำเร็จ");
+        } else {
+            alert("ยังบันทึกสถานะไม่ได้ กรุณาตรวจสอบว่า Apps Script รองรับ action=updateStatus แล้วหรือยัง");
+        }
+        selectElement.disabled = false;
+    }, { once: true });
+
+    document.body.appendChild(iframe);
+    document.body.appendChild(form);
+
+    try {
+        form.submit();
+    } catch (error) {
+        cleanup();
+        selectElement.disabled = false;
+        selectElement.value = previousStatus;
+        alert("ส่งคำขอเปลี่ยนสถานะไม่สำเร็จ");
+    }
 }
 
 
