@@ -210,7 +210,7 @@ function updateSummary() {
 
     // Trim ช่องว่างและ normalize สถานะก่อนนับ เพื่อป้องกันค่าจาก Sheet มีช่องว่างติดมา
     const normalizeStatus = function (issue) {
-        return getIssueValue(issue, "STATUS").trim().replace(/\\s+/g, " ");
+        return getIssueValue(issue, "STATUS").normalize("NFC").replace(/[\\s\\u200B\\uFEFF]+/g, "").trim();
     };
 
     const pendingCount = allIssues.filter(function (issue) {
