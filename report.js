@@ -183,7 +183,7 @@ async function handleReportSubmit(event) {
 
 
     const reporterName =
-        getValue("reporterName") || getValue("assetNumber");
+        getValue("reporterName");
 
 
     const imageInput =
