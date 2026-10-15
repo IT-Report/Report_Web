@@ -7,6 +7,7 @@
 const SPREADSHEET_ID = "1m42Pci0v8q3Ilednss5CoR1jmS2qbXR58LpKo0xCu9k";
 const ISSUE_SHEET_NAME = "Reports";
 const NOTIFY_EMAIL = "it@kftc.co.th";
+const IMAGE_FOLDER_ID = "1FsVs1ODYtn3yEfVZHeWSWtbAPFfZqd1f";
 const TIME_ZONE = "Asia/Bangkok";
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 
@@ -180,7 +181,8 @@ function saveImageToDrive_(dataUrl, ticket) {
   if (!extension) throw new Error("รองรับเฉพาะรูป JPG, PNG, WEBP หรือ GIF");
   const safeTicket = ticket.replace(/[^a-zA-Z0-9_-]/g, "_");
   const blob = Utilities.newBlob(bytes, mimeType, safeTicket + "." + extension);
-  const file = DriveApp.createFile(blob);
+  const folder = DriveApp.getFolderById(IMAGE_FOLDER_ID);
+  const file = folder.createFile(blob);
   // Dashboard เป็น GitHub Pages จึงต้องเปิดดูไฟล์ผ่านลิงก์ได้
   // โปรดอย่าแนบรูปที่มีข้อมูลลับ/ข้อมูลส่วนบุคคลอ่อนไหว
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
