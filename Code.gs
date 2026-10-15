@@ -228,3 +228,15 @@ function createTicketNumber_() {
   return "IT-" + Utilities.formatDate(new Date(), TIME_ZONE, "yyyyMMdd-HHmmss") +
     "-" + Math.floor(Math.random() * 900 + 100);
 }
+
+/**
+ * Run this function once from the Apps Script editor to authorize
+ * Spreadsheet and Drive access before deploying the web app.
+ */
+function authorizeServices() {
+  const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(ISSUE_SHEET_NAME);
+  if (!sheet) throw new Error("ไม่พบชีต " + ISSUE_SHEET_NAME);
+  DriveApp.getRootFolder().getName();
+  if (NOTIFY_EMAIL) MailApp.getRemainingDailyQuota();
+  Logger.log("Report-IT services authorized.");
+}
