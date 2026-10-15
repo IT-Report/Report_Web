@@ -265,6 +265,7 @@ function renderIssues() {
         const dateTime = getIssueValue(issue, "DATE/TIME");
         const user = getIssueValue(issue, "USER");
         const reporterName = getIssueValue(issue, "REPORTERNAME") || user;
+        const affectedEmployeeName = getIssueValue(issue, "AFFECTEDEMPLOYEENAME");
         const department = getIssueValue(issue, "DEPARTMENT");
         const subject = getIssueValue(issue, "SUBJECT");
         const description = getIssueValue(issue, "DESCRIPTION");
@@ -284,6 +285,7 @@ function renderIssues() {
             dateTime,
             user,
             reporterName,
+            affectedEmployeeName,
             department,
             subject,
             description,
@@ -309,7 +311,7 @@ function renderIssues() {
         const row = document.createElement("tr");
 
         const cell = document.createElement("td");
-        cell.colSpan = 9;
+        cell.colSpan = 10;
         cell.className = "empty-message";
         cell.textContent = "ไม่พบรายการแจ้งปัญหา";
 
@@ -326,6 +328,7 @@ function renderIssues() {
         const dateTime = getIssueValue(issue, "DATE/TIME");
         const user = getIssueValue(issue, "USER");
         const reporterName = getIssueValue(issue, "REPORTERNAME") || user;
+        const affectedEmployeeName = getIssueValue(issue, "AFFECTEDEMPLOYEENAME");
         const department = getIssueValue(issue, "DEPARTMENT");
         const subject = getIssueValue(issue, "SUBJECT");
         const description = getIssueValue(issue, "DESCRIPTION");
@@ -335,6 +338,7 @@ function renderIssues() {
         addCell(row, ticket);
         addCell(row, formatDate(dateTime));
         addCell(row, reporterName);
+        addCell(row, affectedEmployeeName);
         addCell(row, department);
         addCell(row, subject);
         addCell(row, description);
@@ -518,6 +522,7 @@ function getIssueValue(issue, field) {
         "SUBJECT": ["SUBJECT", "subject", "title"],
         "DESCRIPTION": ["DESCRIPTION", "description", "detail"],
         "REPORTERNAME": ["ชื่อผู้แจ้งปัญหา", "NameReport", "NAMEREPORT", "REPORTERNAME", "reporterName", "nameReport"],
+        "AFFECTEDEMPLOYEENAME": ["ชื่อพนักงานที่เกิดปัญหา", "AFFECTEDEMPLOYEENAME", "affectedEmployeeName", "affected_employee_name"],
         "STATUS": ["STATUS", "status"],
         "IMAGE": ["IMAGE", "image", "imageUrl"]
     };
@@ -585,6 +590,7 @@ function openIssueDetail(issue) {
         ["Ticket", getIssueValue(issue, "TICKET")],
         ["วันที่แจ้ง", formatDate(getIssueValue(issue, "DATE/TIME"))],
         ["ชื่อผู้แจ้งปัญหา", getIssueValue(issue, "REPORTERNAME") || getIssueValue(issue, "USER")],
+        ["ชื่อพนักงานที่เกิดปัญหา", getIssueValue(issue, "AFFECTEDEMPLOYEENAME")],
         ["แผนก", getIssueValue(issue, "DEPARTMENT")],
         ["หัวข้อ", getIssueValue(issue, "SUBJECT")],
         ["รายละเอียด", getIssueValue(issue, "DESCRIPTION")],
