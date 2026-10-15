@@ -343,10 +343,7 @@ async function handleReportSubmit(event) {
 };
 
 
-    console.log(
-        "ข้อมูลที่จะส่ง:",
-        payload
-    );
+    // ไม่ log payload เพราะอาจมีข้อมูลรูปภาพ Base64 ขนาดใหญ่
 
 
     /*************************************************
@@ -457,232 +454,76 @@ async function handleReportSubmit(event) {
  *************************************************/
 
 function postToGoogleAppsScript(payload) {
-
-    return new Promise(
-        function (resolve, reject) {
-
-            const iframeName =
-                "issueReportFrame_" +
-                Date.now();
-
-
-            const iframe =
-                document.createElement("iframe");
-
-
-            iframe.name =
-                iframeName;
-
-
-            iframe.id =
-                iframeName;
-
-
-            iframe.style.display =
-                "none";
-
-
-            document.body.appendChild(
-                iframe
-            );
-
-
-            const form =
-                document.createElement("form");
-
-
-            form.method =
-                "POST";
-
-
-            form.action =
-                API_URL;
-
-
-            form.target =
-                iframeName;
-
-
-            form.style.display =
-                "none";
-
-
-            const input =
-                document.createElement("input");
-
-
-            input.type =
-                "hidden";
-
-
-            input.name =
-                "payload";
-
-
-            input.value =
-                JSON.stringify(payload);
-
-
-            form.appendChild(
-                input
-            );
-
-
-            document.body.appendChild(
-                form
-            );
-
-
-            let completed =
-                false;
-
-
-            const timeoutId =
-                setTimeout(
-                    function () {
-
-                        if (completed) {
-                            return;
-                        }
-
-
-                        completed =
-                            true;
-
-
-                        cleanup();
-
-
-                        reject(
-                            new Error(
-                                "หมดเวลารอ Google Apps Script"
-                            )
-                        );
-
-                    },
-                    30000
-                );
-
-
-            function cleanup() {
-
-                clearTimeout(
-                    timeoutId
-                );
-
-
-                setTimeout(
-                    function () {
-
-                        if (
-                            form &&
-                            form.parentNode
-                        ) {
-
-                            form.parentNode.removeChild(
-                                form
-                            );
-
-                        }
-
-
-                        if (
-                            iframe &&
-                            iframe.parentNode
-                        ) {
-
-                            iframe.parentNode.removeChild(
-                                iframe
-                            );
-
-                        }
-
-                    },
-                    500
-                );
-
-            }
-
-
-            /*
-             * Google Apps Script ตอบกลับ
-             */
-
-            iframe.addEventListener(
-                "load",
-                function () {
-
-                    if (completed) {
-                        return;
-                    }
-
-
-                    completed =
-                        true;
-
-
-                    cleanup();
-
-
-                    /*
-                     * เนื่องจาก iframe
-                     * ไม่สามารถอ่าน response
-                     * ข้าม domain ได้
-                     *
-                     * จึงถือว่าการ POST
-                     * สำเร็จเมื่อ iframe load
-                     */
-
-                    resolve({
-
-                        success:
-                            true,
-
-                        message:
-                            "ส่งข้อมูลไปยัง Google Apps Script แล้ว"
-
-                    });
-
-                },
-                {
-                    once: true
-                }
-            );
-
-
-            /*
-             * ส่ง
-             */
-
-            try {
-
-                form.submit();
-
-            } catch (error) {
-
-                if (!completed) {
-
-                    completed =
-                        true;
-
-                    cleanup();
-
-
-                    reject(
-                        new Error(
-                            "ไม่สามารถส่งข้อมูลไปยังระบบได้"
-                        )
-                    );
-
-                }
-
-            }
-
+    return new Promise(function (resolve, reject) {
+        const iframeName = "issueReportFrame_" + Date.now();
+        const iframe = document.createElement("iframe");
+        iframe.name = iframeName;
+        iframe.id = iframeName;
+        iframe.style.display = "none";
+
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = API_URL;
+        form.target = iframeName;
+        form.style.display = "none";
+
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "payload";
+        input.value = JSON.stringify(payload);
+        form.appendChild(input);
+
+        let completed = false;
+        const timeoutId = setTimeout(function () {
+            if (completed) return;
+            completed = true;
+            cleanup();
+            reject(new Error("หมดเวลารอ Google Apps Script กรุณาตรวจสอบการ Deploy และลองอีกครั้ง"));
+        }, 60000);
+
+        function cleanup() {
+            clearTimeout(timeoutId);
+            window.removeEventListener("message", handleMessage);
+            setTimeout(function () {
+                if (form.parentNode) form.parentNode.removeChild(form);
+                if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+            }, 300);
         }
-    );
 
+        function handleMessage(event) {
+            const message = event.data;
+            if (!message || message.type !== "REPORT_IT_RESULT") return;
+            if (completed) return;
+
+            completed = true;
+            cleanup();
+
+            if (message.result && message.result.success === true) {
+                resolve(message.result);
+            } else {
+                reject(new Error(
+                    message.result && message.result.message
+                        ? message.result.message
+                        : "Google Apps Script ไม่สามารถบันทึกข้อมูลได้"
+                ));
+            }
+        }
+
+        window.addEventListener("message", handleMessage);
+        document.body.appendChild(iframe);
+        document.body.appendChild(form);
+
+        try {
+            form.submit();
+        } catch (error) {
+            if (!completed) {
+                completed = true;
+                cleanup();
+                reject(new Error("ไม่สามารถส่งข้อมูลไปยัง Google Apps Script ได้"));
+            }
+        }
+    });
 }
-
 
 /*************************************************
  * แปลงรูปเป็น Base64
