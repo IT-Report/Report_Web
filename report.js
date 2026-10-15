@@ -220,6 +220,18 @@ async function handleReportSubmit(event) {
     }
 
 
+    if (!reporterName) {
+
+        showError(
+            "กรุณากรอกชื่อผู้แจ้งปัญหา"
+        );
+
+        focusElement("reporterName");
+
+        return;
+    }
+
+
 
 
     /*************************************************
