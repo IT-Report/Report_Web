@@ -267,7 +267,8 @@ function renderIssues() {
 
         const matchesStatus =
             selectedStatus === "all" ||
-            status === selectedStatus;
+            status === selectedStatus ||
+            (selectedStatus === "เสร็จสิ้น" && status === "ดำเนินการแล้ว");
 
         const matchesDepartment =
             selectedDepartment === "all" ||
