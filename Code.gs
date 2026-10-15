@@ -2,7 +2,7 @@
  * REPORT-IT Google Apps Script backend
  * Sheet columns:
  * A TICKET | B DATE/TIME | C USER | D DEPARTMENT | E SUBJECT
- * F DESCRIPTION | G NameReport | H STATUS | I IMAGE
+ * F DESCRIPTION | G NameReport | H STATUS | I IMAGE | J ชื่อพนักงานที่เกิดปัญหา
  */
 const SPREADSHEET_ID = "1m42Pci0v8q3Ilednss5CoR1jmS2qbXR58LpKo0xCu9k";
 const ISSUE_SHEET_NAME = "Reports";
@@ -60,7 +60,8 @@ function doGet(e) {
           "DESCRIPTION": get(["DESCRIPTION", "DETAIL"]),
           "ชื่อผู้แจ้งปัญหา": get(["ชื่อผู้แจ้งปัญหา", "NAMEREPORT", "REPORTERNAME"]),
           "STATUS": get(["STATUS"]),
-          "IMAGE": get(["IMAGE", "IMAGE URL", "IMAGEURL"])
+          "IMAGE": get(["IMAGE", "IMAGE URL", "IMAGEURL"]),
+          "ชื่อพนักงานที่เกิดปัญหา": get(["ชื่อพนักงานที่เกิดปัญหา", "AFFECTEDEMPLOYEENAME", "AFFECTED EMPLOYEE NAME"])
         };
       });
     return json({ success: true, data: issues });
@@ -76,9 +77,11 @@ function createIssue(data) {
     const category = String(data.category || data.issueType || "").trim();
     const description = String(data.description || "").trim();
     const reporterName = String(data.reporterName || data.nameReport || data.fullname || "").trim();
+    const affectedEmployeeName = String(data.affectedEmployeeName || data.affected_employee_name || "").trim();
     if (!category) throw new Error("กรุณาเลือกประเภทปัญหา");
     if (!description) throw new Error("กรุณากรอกรายละเอียดปัญหา");
     if (!reporterName) throw new Error("กรุณากรอกชื่อผู้แจ้งปัญหา");
+    if (!affectedEmployeeName) throw new Error("กรุณากรอกชื่อพนักงานที่เกิดปัญหา");
 
     const sheet = getIssueSheet_();
     const ticket = String(data.ticket || createTicketNumber_());
@@ -95,7 +98,7 @@ function createIssue(data) {
     lock.waitLock(20000);
     let savedRow;
     try {
-      sheet.appendRow([ticket, dateTime, user, department, category, description, reporterName, status, imageUrl]);
+      sheet.appendRow([ticket, dateTime, user, department, category, description, reporterName, status, imageUrl, affectedEmployeeName]);
       SpreadsheetApp.flush();
       savedRow = sheet.getLastRow();
     } finally {
@@ -105,7 +108,7 @@ function createIssue(data) {
     let emailSent = false;
     let emailError = "";
     try {
-      sendIssueEmail_({ ticket, dateTime, user, department, category, description, reporterName, status, imageUrl });
+      sendIssueEmail_({ ticket, dateTime, user, department, category, description, reporterName, affectedEmployeeName, status, imageUrl });
       emailSent = true;
     } catch (error) {
       emailError = String(error.message || error);
@@ -160,6 +163,10 @@ function getIssueSheet_() {
   const sheet = ss.getSheetByName(ISSUE_SHEET_NAME);
   if (!sheet) throw new Error("ไม่พบชีต " + ISSUE_SHEET_NAME + " ใน " + ss.getName());
   if (sheet.getLastColumn() < 9) sheet.getRange(1, 9).setValue("IMAGE");
+  const employeeHeader = normalizeHeader_(sheet.getRange(1, 10).getDisplayValue());
+  if (!["ชื่อพนักงานที่เกิดปัญหา", "AFFECTEDEMPLOYEENAME", "AFFECTED EMPLOYEE NAME"].includes(employeeHeader)) {
+    sheet.getRange(1, 10).setValue("ชื่อพนักงานที่เกิดปัญหา");
+  }
   return sheet;
 }
 
@@ -197,6 +204,7 @@ function sendIssueEmail_(issue) {
     "วันที่แจ้ง: " + issue.dateTime,
     "ผู้ใช้: " + (issue.user || "-"),
     "ชื่อผู้แจ้งปัญหา: " + (issue.reporterName || "-"),
+    "ชื่อพนักงานที่เกิดปัญหา: " + (issue.affectedEmployeeName || "-"),
     "แผนก: " + (issue.department || "-"),
     "ประเภทปัญหา: " + (issue.category || "-"),
     "สถานะ: " + (issue.status || "รอดำเนินการ"), "",
