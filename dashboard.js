@@ -283,6 +283,7 @@ function renderIssues() {
             ticket,
             dateTime,
             user,
+            reporterName,
             department,
             subject,
             description,
@@ -373,6 +374,21 @@ function renderIssues() {
             imageLink.rel = "noopener noreferrer";
             imageLink.textContent = "ดูรูปภาพ";
 
+            const thumbnail = document.createElement("img");
+            thumbnail.src = getDisplayImageUrl(image);
+            thumbnail.alt = "รูปประกอบ Ticket " + ticket;
+            thumbnail.loading = "lazy";
+            thumbnail.style.display = "block";
+            thumbnail.style.width = "72px";
+            thumbnail.style.height = "54px";
+            thumbnail.style.objectFit = "cover";
+            thumbnail.style.borderRadius = "6px";
+            thumbnail.style.margin = "0 auto 5px";
+            thumbnail.onerror = function () {
+                thumbnail.style.display = "none";
+            };
+
+            imageCell.appendChild(thumbnail);
             imageCell.appendChild(imageLink);
         } else {
             imageCell.textContent = "-";
@@ -572,8 +588,7 @@ function openIssueDetail(issue) {
         ["แผนก", getIssueValue(issue, "DEPARTMENT")],
         ["หัวข้อ", getIssueValue(issue, "SUBJECT")],
         ["รายละเอียด", getIssueValue(issue, "DESCRIPTION")],
-        ["สถานะ", getIssueValue(issue, "STATUS")],
-        ["รูปภาพ", getIssueValue(issue, "IMAGE")]
+        ["สถานะ", getIssueValue(issue, "STATUS")]
     ];
 
     fields.forEach(function (field) {
@@ -592,7 +607,65 @@ function openIssueDetail(issue) {
         detail.appendChild(wrapper);
     });
 
+    const imageUrl = getIssueValue(issue, "IMAGE");
+    if (imageUrl) {
+        const imageWrapper = document.createElement("div");
+        imageWrapper.className = "detail-row";
+
+        const imageLabel = document.createElement("strong");
+        imageLabel.textContent = "รูปภาพ: ";
+
+        const imageContainer = document.createElement("div");
+        imageContainer.style.marginTop = "8px";
+
+        const image = document.createElement("img");
+        image.src = getDisplayImageUrl(imageUrl);
+        image.alt = "รูปภาพประกอบ Ticket " + getIssueValue(issue, "TICKET");
+        image.style.display = "block";
+        image.style.maxWidth = "100%";
+        image.style.maxHeight = "420px";
+        image.style.objectFit = "contain";
+        image.style.borderRadius = "8px";
+        image.onerror = function () {
+            image.style.display = "none";
+        };
+
+        const link = document.createElement("a");
+        link.href = imageUrl;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "เปิดรูปภาพในแท็บใหม่";
+        link.style.display = "inline-block";
+        link.style.marginTop = "8px";
+
+        imageContainer.appendChild(image);
+        imageContainer.appendChild(link);
+        imageWrapper.appendChild(imageLabel);
+        imageWrapper.appendChild(imageContainer);
+        detail.appendChild(imageWrapper);
+    }
+
     modal.hidden = false;
+}
+
+
+/**
+ * แปลงลิงก์ Google Drive ให้ใช้เป็นแหล่งรูปภาพได้
+ * รองรับลิงก์ /file/d/FILE_ID/view และ ?id=FILE_ID
+ */
+function getDisplayImageUrl(url) {
+    const value = String(url || "").trim();
+    if (!value) return "";
+
+    const filePathMatch = value.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    const queryMatch = value.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    const fileId = filePathMatch ? filePathMatch[1] : (queryMatch ? queryMatch[1] : "");
+
+    if (fileId && /drive\.google\.com/i.test(value)) {
+        return "https://drive.google.com/uc?export=view&id=" + encodeURIComponent(fileId);
+    }
+
+    return value;
 }
 
 
