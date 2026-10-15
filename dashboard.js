@@ -282,6 +282,7 @@ function renderIssues() {
         const ticket = getIssueValue(issue, "TICKET");
         const dateTime = getIssueValue(issue, "DATE/TIME");
         const user = getIssueValue(issue, "USER");
+        const reporterName = getIssueValue(issue, "REPORTERNAME") || user;
         const department = getIssueValue(issue, "DEPARTMENT");
         const subject = getIssueValue(issue, "SUBJECT");
         const description = getIssueValue(issue, "DESCRIPTION");
@@ -340,6 +341,7 @@ function renderIssues() {
         const ticket = getIssueValue(issue, "TICKET");
         const dateTime = getIssueValue(issue, "DATE/TIME");
         const user = getIssueValue(issue, "USER");
+        const reporterName = getIssueValue(issue, "REPORTERNAME") || user;
         const department = getIssueValue(issue, "DEPARTMENT");
         const subject = getIssueValue(issue, "SUBJECT");
         const description = getIssueValue(issue, "DESCRIPTION");
@@ -348,7 +350,7 @@ function renderIssues() {
 
         addCell(row, ticket);
         addCell(row, formatDate(dateTime));
-        addCell(row, user);
+        addCell(row, reporterName);
         addCell(row, department);
         addCell(row, subject);
         addCell(row, description);
@@ -516,6 +518,7 @@ function getIssueValue(issue, field) {
         "DEPARTMENT": ["DEPARTMENT", "department", "dept"],
         "SUBJECT": ["SUBJECT", "subject", "title"],
         "DESCRIPTION": ["DESCRIPTION", "description", "detail"],
+        "REPORTERNAME": ["ชื่อผู้แจ้งปัญหา", "NameReport", "NAMEREPORT", "REPORTERNAME", "reporterName", "nameReport"],
         "STATUS": ["STATUS", "status"],
         "IMAGE": ["IMAGE", "image", "imageUrl"]
     };
@@ -582,7 +585,7 @@ function openIssueDetail(issue) {
     const fields = [
         ["Ticket", getIssueValue(issue, "TICKET")],
         ["วันที่แจ้ง", formatDate(getIssueValue(issue, "DATE/TIME"))],
-        ["ผู้แจ้ง", getIssueValue(issue, "USER")],
+        ["ชื่อผู้แจ้งปัญหา", getIssueValue(issue, "REPORTERNAME") || getIssueValue(issue, "USER")],
         ["แผนก", getIssueValue(issue, "DEPARTMENT")],
         ["หัวข้อ", getIssueValue(issue, "SUBJECT")],
         ["รายละเอียด", getIssueValue(issue, "DESCRIPTION")],
