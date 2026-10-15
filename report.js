@@ -182,8 +182,8 @@ async function handleReportSubmit(event) {
         getValue("description");
 
 
-    const assetNumber =
-        getValue("assetNumber");
+    const reporterName =
+        getValue("reporterName") || getValue("assetNumber");
 
 
     const imageInput =
@@ -335,7 +335,7 @@ async function handleReportSubmit(event) {
 
     category: issueType,
     description: description,
-    assetNumber: assetNumber,
+    reporterName: reporterName,
 
     status: "รอดำเนินการ",
 
