@@ -204,45 +204,22 @@ function showError(show) {
  *************************************************/
 
 function updateSummary() {
-    const totalIssues =
-        document.getElementById("totalIssues");
-
-    const pendingIssues =
-        document.getElementById("pendingIssues");
-
-    const progressIssues =
-        document.getElementById("progressIssues");
-
-    const completedIssues =
-        document.getElementById("completedIssues");
+    const totalIssues = document.getElementById("totalIssues");
+    const pendingIssues = document.getElementById("pendingIssues");
+    const completedIssues = document.getElementById("completedIssues");
 
     const pendingCount = allIssues.filter(function (issue) {
         return getIssueValue(issue, "STATUS") === "รอดำเนินการ";
     }).length;
 
-    const progressCount = allIssues.filter(function (issue) {
-        return getIssueValue(issue, "STATUS") === "กำลังดำเนินการ";
-    }).length;
-
     const completedCount = allIssues.filter(function (issue) {
-        return getIssueValue(issue, "STATUS") === "ดำเนินการแล้ว";
+        const status = getIssueValue(issue, "STATUS");
+        return status === "เสร็จสิ้น" || status === "ดำเนินการแล้ว";
     }).length;
 
-    if (totalIssues) {
-        totalIssues.textContent = allIssues.length;
-    }
-
-    if (pendingIssues) {
-        pendingIssues.textContent = pendingCount;
-    }
-
-    if (progressIssues) {
-        progressIssues.textContent = progressCount;
-    }
-
-    if (completedIssues) {
-        completedIssues.textContent = completedCount;
-    }
+    if (totalIssues) totalIssues.textContent = allIssues.length;
+    if (pendingIssues) pendingIssues.textContent = pendingCount;
+    if (completedIssues) completedIssues.textContent = completedCount;
 }
 
 
