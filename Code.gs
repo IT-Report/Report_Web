@@ -238,7 +238,11 @@ function createTicketNumber_() {
 function authorizeServices() {
   const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(ISSUE_SHEET_NAME);
   if (!sheet) throw new Error("ไม่พบชีต " + ISSUE_SHEET_NAME);
-  DriveApp.getRootFolder().getName();
+
+  // ขอสิทธิ์เข้าถึงโฟลเดอร์ Drive ที่เก็บรูปโดยตรง
+  const imageFolder = DriveApp.getFolderById(IMAGE_FOLDER_ID);
+  Logger.log("Image folder: " + imageFolder.getName());
+
   if (NOTIFY_EMAIL) MailApp.getRemainingDailyQuota();
   Logger.log("Report-IT services authorized.");
 }
