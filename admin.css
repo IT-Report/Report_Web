@@ -56,3 +56,18 @@ button:hover{filter:brightness(.95)}
 .issue-status-select{min-width:135px;max-width:100%;padding:7px 10px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#1f2937;cursor:pointer}
 .issue-status-select:disabled{opacity:.65;cursor:wait}
 .issue-status-select:focus{outline:2px solid #93c5fd;outline-offset:1px}
+
+
+/* จัดคอลัมน์สถานะในตารางให้อยู่กึ่งกลาง */
+.issue-table th:nth-child(7),
+.issue-table td:nth-child(7) {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.issue-status-select {
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+    text-align-last: center;
+}
