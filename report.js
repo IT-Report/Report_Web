@@ -186,6 +186,10 @@ async function handleReportSubmit(event) {
         getValue("reporterName");
 
 
+    const affectedEmployeeName =
+        getValue("affectedEmployeeName");
+
+
     const imageInput =
         document.getElementById("image");
 
@@ -232,6 +236,16 @@ async function handleReportSubmit(event) {
     }
 
 
+    if (!affectedEmployeeName) {
+
+        showError(
+            "กรุณากรอกชื่อพนักงานที่เกิดปัญหา"
+        );
+
+        focusElement("affectedEmployeeName");
+
+        return;
+    }
 
 
     /*************************************************
@@ -348,6 +362,7 @@ async function handleReportSubmit(event) {
     category: issueType,
     description: description,
     reporterName: reporterName,
+    affectedEmployeeName: affectedEmployeeName,
 
     status: "รอดำเนินการ",
 
