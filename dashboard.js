@@ -208,12 +208,17 @@ function updateSummary() {
     const pendingIssues = document.getElementById("pendingIssues");
     const completedIssues = document.getElementById("completedIssues");
 
+    // Trim ช่องว่างและ normalize สถานะก่อนนับ เพื่อป้องกันค่าจาก Sheet มีช่องว่างติดมา
+    const normalizeStatus = function (issue) {
+        return getIssueValue(issue, "STATUS").trim().replace(/\\s+/g, " ");
+    };
+
     const pendingCount = allIssues.filter(function (issue) {
-        return getIssueValue(issue, "STATUS") === "รอดำเนินการ";
+        return normalizeStatus(issue) === "รอดำเนินการ";
     }).length;
 
     const completedCount = allIssues.filter(function (issue) {
-        const status = getIssueValue(issue, "STATUS");
+        const status = normalizeStatus(issue);
         return status === "เสร็จสิ้น" || status === "ดำเนินการแล้ว";
     }).length;
 
