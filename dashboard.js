@@ -5,7 +5,6 @@
 const API_URL =
     "https://script.google.com/macros/s/AKfycbzxvPWN-kRjwzNMGpFrB-q8CiTYyhZWBC5taH-bB2cHga9XbLXXy6-DcTTM7D9Znkq1Wg/exec";
 
-
 let allIssues = [];
 
 
