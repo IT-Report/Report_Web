@@ -4,7 +4,7 @@
  *************************************************/
 
 const API_URL =
-    "https://script.google.com/macros/s/AKfycbw4tzbbumpOpqtPD9e1TUBgRi9EX6-c4nWPIBIyK2vlJdLsdfLRrMC7N0rUiK5fnFpf/exec";
+    "https://script.google.com/macros/s/AKfycbzxvPWN-kRjwzNMGpFrB-q8CiTYyhZWBC5taH-bB2cHga9XbLXXy6-DcTTM7D9Znkq1Wg/exec";
 
 
 /*************************************************
